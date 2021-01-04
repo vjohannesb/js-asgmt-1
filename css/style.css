@@ -39,6 +39,9 @@ main article .container {
     margin-bottom: 0.5rem;
     list-style-type: none;
     border: 1px solid rgba(100, 100, 100, 0.5);
+}
+
+.user-info ul li i {
     cursor: pointer;
 }
 
@@ -49,4 +52,15 @@ main article .container {
 
 .user-details .desc {
     font-weight: bold;
+}
+
+.user-details .row p {
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}
+
+.user-details .row p span,
+.user-details .row address p {
+    font-weight: normal !important;
 }

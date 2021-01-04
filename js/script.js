@@ -1,16 +1,17 @@
 // * Constants
 const userList = document.getElementById("user-list");
 const submitBtn = document.getElementById("saveUser");
-submitBtn.onsubmit = () => {
-    preventDefault();
-    console.log("hajhaj");
-}
+
+const detailCol1 = "col-7";
+const detailCol2 = "col-5";
 
 // * Variables
 const inputList = [];
-for (const elem of document.getElementsByTagName("input")) {
-    inputList.push(elem);
-}
+$("input").each((i, elem) => {
+    if (elem.type != "submit") {
+        inputList.push(elem);
+    }
+});
 
 
 // * Classes
@@ -41,28 +42,63 @@ class User {
         let span = $(document.createElement("span"))
             .append($(document.createTextNode(this.displayName)));
 
-        let icon = $(document.createElement("i"))
+        this.icon = $(document.createElement("i"))
             .addClass("fas fa-angle-down");
 
-        let details = createNewDetails(user);
-
         this.li = $(document.createElement("li"))
-            .append($(div)
-                .append(span)
-                .append(icon))
-            .append(details);
+            .append(
+                $(div).append(span, this.icon),
+                this.addDetails());
+    }
 
-        return li;
+    addDetails() {
+        let col1 = $(document.createElement("div"))
+            .addClass(detailCol1)
+            .append(`<p>ID: <span>${this.id}</span></p>`,
+                `<p>E-post: <span>${this.email}</span></p>`,
+                `<p>Telefon: <span>${this.phone}</span></p>`);
+
+        let col2 = $(document.createElement("div"))
+            .addClass(detailCol2)
+            .append($(document.createElement("address"))
+                .append(`<p>${this.adress}</p>`,
+                    `<p>${this.zipcode} ${this.city}</p>`));
+
+        let details = $(document.createElement("div"))
+            .append(
+                $(document.createElement("div"))
+                .append(col1, col2)
+                .addClass("row"))
+            .addClass("user-details")
+            .attr("id", this.id);
+
+        return details;
     }
 
     attachToggle() {
-        $(this.li).click(() => {
-            $(elementId).toggle(100);
+        $(this.icon).click(() => {
+            $(this.elementId).toggle(100);
+            $(this.icon).toggleClass("fa-angle-down fa-angle-up");
         })
     }
 
     addToDOM(parent) {
-        parent.appendChild(this.li);
+        this.createElement();
+        this.attachToggle();
+        $(parent).append(this.li);
+    }
+}
+
+// TODO: Byt ut static validate mot "live feedback"
+function validateInput() {
+    for (const input of inputList) {
+        switch (input.id) {
+            case "firstname":
+            case "lastname":
+            case "adress":
+            case "city":
+                break;
+        }
     }
 }
 
@@ -70,85 +106,13 @@ submitBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
 
     // TODO: VALIDATE
-    let newUser = new User(
-        inputList[0].value, inputList[1].value, inputList[2].value, inputList[3].value,
-        inputList[4].value, inputList[5].value, inputList[6].value);
-    console.log(newUser);
-
-    createNewEntry(newUser);
-
-    for (const input of inputList) {
-        input.value = "";
-    }
-
+    new User(...inputList.map((input) => input.value)).addToDOM(userList);
+    inputList.forEach((el) => el.value = "");
 });
-
-// * Functions
-function createNewDetails(user) {
-    let details = document.createElement("div");
-    let subDiv = document.createElement("div");
-    subDiv.classList.add("row");
-
-    let column1 = document.createElement("div");
-    column1.classList.add("col-6");
-
-    column1.innerHTML =
-        `<span class="fw-bold">Id: </span><span>${user.id}</span><br>\
-        <span class="fw-bold">E-post: </span><span>${user.email}</span><br>\
-        <span class="fw-bold">Telefon: </span><span>${user.phone}</span><br>`
-
-
-    let column2 = document.createElement("div");
-    column2.classList.add("col-6");
-
-    column2.innerHTML = `${user.adress}<br>${user.zipcode} ${user.city}`
-
-
-    let text = document.createTextNode("ID: X, Förnamn: Pepep, email: a@a.a");
-    subDiv.appendChild(column1);
-    subDiv.appendChild(column2);
-    details.appendChild(subDiv);
-
-    details.classList.add("user-details");
-    details.id = user.id;
-
-    return details;
-}
-
-function createNewEntry(user) {
-    let li = document.createElement("li");
-    let div = document.createElement("div");
-    div.classList.add("d-flex", "justify-content-between", "align-items-center")
-
-    let span = document.createElement("span");
-    let text = document.createTextNode(`${user.firstName} ${user.lastName}`);
-    span.appendChild(text);
-
-    let icon = document.createElement("i");
-    icon.classList.add("fas", "fa-angle-down");
-
-    let details = createNewDetails(user);
-
-    li.appendChild(div);
-    div.appendChild(span);
-    div.appendChild(icon);
-    li.appendChild(details);
-
-    userList.appendChild(li);
-
-    $(li).click(() => {
-        $(`#${user.id}`).toggle(100);
-    });
-
-    return li;
-}
 
 $(document).ready(function () {
     let me = new User("Johannes", "Bergendahl", "a@a.com", "07634762334", "Hemvägen", "111", "Örebro");
-    let li = createNewEntry(me);
-
-
+    me.addToDOM(userList);
 
     console.log(me);
-
 });
