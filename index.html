@@ -39,39 +39,78 @@
 <body>
     <main>
         <article>
-            <div class="container">
-                <div class="row justify-content-evenly">
+            <div class="container-lg">
+                <div class="row justify-content-evenly gx-0">
 
-                    <div class="col-12 col-sm-6">
-                        <h1>Registrera ny användare</h1>
-                        <form id="user-registration">
-                            <label for="firstname">Förnamn</label>
-                            <input type="text" id="firstname" name="firstname" placeholder="Förnamn">
+                    <div class="col-12 col-md-6">
+                        <h1 id="reg-title">Registrera användare</h1>
+                        <p id="edit-id-display">
+                            <span id="id-title" class="fw-bold">ID:</span>
+                            <span id="id-nr">123</span>
+                        </p>
+                        <form id="user-registration" class="row gy-3">
+                            <div class="col-6">
+                                <label for="firstname" class="form-label">Förnamn</label>
+                                <input class="form-control" type="text" id="firstname" name="firstname"
+                                    placeholder="Förnamn">
+                            </div>
+                            <div class="col-6">
+                                <label for="lastname" class="form-label">Efternamn</label>
+                                <input class="form-control" type="text" id="lastname" name="firstname"
+                                    placeholder="Efternamn">
+                            </div>
 
-                            <label for="lastname">Efternamn</label>
-                            <input type="text" id="lastname" name="firstname" placeholder="Efternamn">
+                            <div class="col-12">
+                                <label for="email" class="form-label">E-postaddress</label>
+                                <input class="form-control" type="text" id="email" name="email"
+                                    placeholder="E-postaddress">
+                            </div>
 
-                            <label for="email">E-postadress</label>
-                            <input type="text" id="email" name="email" placeholder="E-postadress">
+                            <div class="col-12">
+                                <label for="phone" class="form-label">Telefonnummer</label>
+                                <input class="form-control" type="text" id="phone" name="phone"
+                                    placeholder="Telefonnummer">
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">Gatuadress</label>
+                                <input class="form-control" type="text" id="address" name="address"
+                                    placeholder="Gatuaddress">
+                            </div>
 
-                            <label for="phone">Telefonnummer</label>
-                            <input type="text" id="phone" name="phone" placeholder="Telefonnummer">
+                            <div class="col-5">
+                                <label for="zipcode" class="form-label">Postkod</label>
+                                <input class="form-control" type="text" id="zipcode" name="zipcode"
+                                    placeholder="Postkod">
+                            </div>
 
-                            <label for="adress">Gatuadress</label>
-                            <input type="text" id="adress" name="adress" placeholder="Gatuadress">
-                            <label for="zipcode">Postkod</label>
-                            <input type="text" id="zipcode" name="zipcode" placeholder="Postkod">
-                            <label for="city">Postort</label>
-                            <input type="text" id="city" name="city" placeholder="Postort">
+                            <div class="col-7">
+                                <label for="city" class="form-label">Postort</label>
+                                <input class="form-control" type="text" id="city" name="city" placeholder="Postort">
+                            </div>
 
-                            <input type="submit" id="saveUser" value="Spara">
+                            <div class="col-12" id="submitBtn">
+                                <input type="submit" id="saveUser" value="Spara" class="btn btn-outline-success w-100">
+                            </div>
+
+                            <div class="col-12" id="editBtns">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="submit" id="saveEdit" class="btn btn-outline-success w-100"
+                                            value="Spara">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="reset" id="resetEdit" class="btn btn-outline-danger w-100"
+                                            value="Avbryt">
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
 
-                    <div class="col-12 col-sm-6">
+                    <div class="col-12 col-md-6">
                         <div class="user-info">
                             <h1>Användare</h1>
-                            <ul id="user-list"></ul>
+                            <ul id="user-list" class="ps-3 ps-md-4 list-group"></ul>
                         </div>
                     </div>
                 </div>
