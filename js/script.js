@@ -7,8 +7,17 @@ const submitBtn = document.getElementById("saveUser");
 const saveEditBtn = document.getElementById("saveEdit");
 const resetEditBtn = document.getElementById("resetEdit");
 
-const inputsJQuery = $("input[type=text], input[type=email], input[type=tel]");
-const inputsArray = Array.from(inputsJQuery);
+const inputList = Array.from($("input[type=text], input[type=email], input[type=tel]"));
+
+const validInputs = {
+    firstname: false,
+    lastname: false,
+    email: false,
+    phone: false,
+    address: false,
+    zipcode: false,
+    city: false
+}
 
 //#region Regex
 // Non-whitespace i början -> "@" -> a-z0-9_- -> "." -> två eller mer bokstäver i slutet (tld)
@@ -24,21 +33,12 @@ const phoneRegex = /(^0|^\+)\d{7,20}$/;
 const zipRegex = /^\d{5}$/
 //#endregion
 
-const validInputs = {
-    firstname: false,
-    lastname: false,
-    email: false,
-    phone: false,
-    address: false,
-    zipcode: false,
-    city: false
-}
 
 // ! Variables
 var userObjList = [];
 var editingId = "";
 
-// ! User-class
+// ! User class
 class User {
     constructor(firstname, lastname, email, phone, address, zipcode, city) {
         this.id = Date.now().toString();
@@ -49,7 +49,6 @@ class User {
         this.address = address;
         this.zipcode = zipcode;
         this.city = city;
-        this.editing = false;
     }
 
     get displayName() {
@@ -146,15 +145,10 @@ class User {
         editingId = this.id;
 
         $("#id-nr").text(this.id);
-        $("#firstname").val(this.firstName);
-        $("#lastname").val(this.lastName);
-        $("#email").val(this.email);
-        $("#phone").val(this.phone);
-        $("#address").val(this.address);
-        $("#zipcode").val(this.zipcode);
-        $("#city").val(this.city);
+        for (let property in this)
+            $(`#${property.toLowerCase()}`).val(this[property]);
 
-        inputsArray.forEach(input => validateInput({
+        inputList.forEach(input => validateInput({
             currentTarget: input
         }));
         toggleSubmits();
@@ -163,6 +157,8 @@ class User {
     deleteUser() {
         $("#li-" + this.id).remove();
         userObjList = userObjList.filter((u) => u.id !== this.id);
+        editingId = "";
+        hideEditElems();
     }
 }
 
@@ -170,12 +166,13 @@ class User {
 submitBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
 
-    let newUser = new User(...inputsArray.map((input) => input.value.trim()));
+    let newUser = new User(...inputList.map((input) => input.value.trim()));
 
     if (!checkDuplicate(newUser)) {
         userObjList.push(newUser);
         newUser.createElement();
         newUser.addToDOM();
+        editingId = "";
         resetInputs();
     }
 });
@@ -183,7 +180,7 @@ submitBtn.addEventListener("click", function (ev) {
 saveEditBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
 
-    let newUser = new User(...inputsArray.map((input) => input.value.trim()));
+    let newUser = new User(...inputList.map((input) => input.value.trim()));
     newUser.id = editingId;
 
     if (!checkDuplicate(newUser)) {
@@ -198,6 +195,7 @@ saveEditBtn.addEventListener("click", function (ev) {
 
         hideEditElems();
         resetInputs();
+        editingId = "";
     }
 })
 
@@ -219,36 +217,33 @@ function checkDuplicate(newUser) {
 
 function validateInput(e) {
     let target = e.currentTarget;
-    let valid = false;
 
     switch (target.id) {
         case "firstname":
         case "lastname":
         case "city":
-            valid = (target.value.trim().length > 0 && !nameRegex.test(target.value));
+            validInputs[target.id] = (target.value.trim().length > 0 && !nameRegex.test(target.value));
             break;
         case "address":
-            valid = (target.value.trim().length > 0 && !addressRegex.test(target.value));
+            validInputs[target.id] = (target.value.trim().length > 0 && !addressRegex.test(target.value));
             break;
         case "email":
-            valid = emailRegex.test(target.value);
+            validInputs[target.id] = emailRegex.test(target.value);
             break;
         case "phone":
-            valid = phoneRegex.test(target.value);
+            validInputs[target.id] = phoneRegex.test(target.value);
             break;
         case "zipcode":
-            valid = zipRegex.test(target.value);
+            validInputs[target.id] = zipRegex.test(target.value);
             break;
         default:
             break;
     }
 
-    if (!valid)
+    if (!validInputs[target.id])
         target.classList.add("invalid-input");
     else
         target.classList.remove("invalid-input");
-
-    validInputs[target.id] = valid;
 }
 
 function toggleSubmits() {
@@ -271,7 +266,7 @@ function hideEditElems() {
 }
 
 function resetInputs() {
-    inputsArray.forEach((el) => el.value = "");
+    inputList.forEach((el) => el.value = "");
     submitBtn.disabled = true;
     saveEditBtn.disabled = true;
     emailWarning.hide();
@@ -284,7 +279,7 @@ function resetInputs() {
 
 // ! (jQuery) DOM ready
 $(document).ready(function () {
-    let me = new User("Johannes", "Bergendahl", "johannes.b.nilsson@gmail.com", "0701234567", "Hemvägen", "11111", "Örebro");
+    let me = new User("Johannes", "Bergendahl", "johannes@gmail.com", "0701234567", "Hemvägen", "11111", "Örebro");
     me.createElement();
     me.addToDOM();
     userObjList.push(me);
@@ -293,7 +288,7 @@ $(document).ready(function () {
     resetInputs();
     hideEditElems();
 
-    $(inputsJQuery).on("input", function (e) {
+    $("input[type=text], input[type=email], input[type=tel]").on("input", function (e) {
         validateInput(e);
         toggleSubmits();
     });
