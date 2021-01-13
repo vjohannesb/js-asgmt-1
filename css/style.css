@@ -43,10 +43,6 @@ body {
     font-weight: normal !important;
 }
 
-.user-details i {
-    cursor: pointer;
-}
-
 #editBtns,
 #edit-id-display {
     display: none;
