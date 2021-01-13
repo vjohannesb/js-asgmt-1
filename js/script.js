@@ -56,10 +56,6 @@ class User {
         return `${this.firstName} ${this.lastName}`;
     }
 
-    get elementId() {
-        return "#" + this.id;
-    }
-
     createElement() {
         this.div = $(document.createElement("div"))
             .addClass("d-flex justify-content-between align-items-center user-item")
@@ -79,13 +75,13 @@ class User {
                 $(this.div).append(span, this.icon),
                 this.addDetails());
 
-        this.attachToggle();
+        this.attachToggles();
         return this.li;
     }
 
     addDetails() {
         let col1 = $(document.createElement("div"))
-            .addClass("col-7 col-md-12 col-lg-7")
+            .addClass("col-12 col-sm-7 col-lg-7")
             .append(`<p>ID: <span class="uid">${this.id}</span></p>`,
                 `<p>E-post: <span>${this.email}</span></p>`,
                 `<p>Telefon: <span>${this.phone}</span></p>`);
@@ -105,7 +101,7 @@ class User {
             .click(() => this.deleteUser());
 
         let col2 = $(document.createElement("div"))
-            .addClass("col-5 col-md-12 col-lg-5")
+            .addClass("col-12 col-sm-5 col-lg-5 mt-3")
             .append($(document.createElement("div"))
                 .append($(document.createElement("address"))
                     .append(`<p><span>${this.address}</span></p>`,
@@ -125,10 +121,10 @@ class User {
         return details;
     }
 
-    attachToggle() {
+    attachToggles() {
         $(this.div).click(() => {
-            $(this.elementId).toggle(100);
-            $(this.icon).toggleClass("fa-angle-down fa-angle-up");
+            $(`#${this.id}`).toggle(100);
+            $(`#li-${this.id} .toggle-details`).toggleClass("fa-angle-down fa-angle-up");
 
         });
         // Tillgänglighet, simulera "klick" på enter (32) & space (13)
@@ -138,7 +134,12 @@ class User {
         });
     }
 
-    addToDOM = () => userDOMList.append(this.li);
+    addToDOM() {
+        userDOMList.append(this.li);
+        delete this.li;
+        delete this.div;
+        delete this.icon;
+    }
 
     editUser() {
         showEditElems();
@@ -156,11 +157,12 @@ class User {
         inputsArray.forEach(input => validateInput({
             currentTarget: input
         }));
+        toggleSubmits();
     }
 
     deleteUser() {
         $("#li-" + this.id).remove();
-        userObjList = userObjList.filter((e) => e.id !== this.id);
+        userObjList = userObjList.filter((u) => u.id !== this.id);
     }
 }
 
@@ -189,6 +191,7 @@ saveEditBtn.addEventListener("click", function (ev) {
             $("#li-" + newUser.id).replaceWith(newUser.createElement());
             userObjList = userObjList.map(user => user.id == newUser.id ? newUser : user);
         } else {
+            userObjList.push(newUser);
             newUser.createElement();
             newUser.addToDOM();
         }
@@ -281,12 +284,12 @@ function resetInputs() {
 
 // ! (jQuery) DOM ready
 $(document).ready(function () {
-    let me = new User("Johannes", "Bergendahl", "johannes.b.nilsson@gmail.com", "0763476233", "Hemvägen", "11111", "Örebro");
+    let me = new User("Johannes", "Bergendahl", "johannes.b.nilsson@gmail.com", "0701234567", "Hemvägen", "11111", "Örebro");
     me.createElement();
     me.addToDOM();
     userObjList.push(me);
 
-    // Validera vid init/reload
+    // Reset vid init/reload
     resetInputs();
     hideEditElems();
 

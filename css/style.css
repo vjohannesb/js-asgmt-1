@@ -4,10 +4,8 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-main article .container-lg {
+.container-xxl {
     margin-top: 2rem;
-    padding-left: 1rem;
-    padding-right: 2rem;
 }
 
 .user-info h1 {
@@ -31,6 +29,7 @@ main article .container-lg {
 .user-details {
     display: none;
     margin-top: 1rem;
+    word-wrap: break-word;
 }
 
 .user-details .row p {
@@ -58,7 +57,7 @@ main article .container-lg {
 }
 
 .input-warning {
-    color: red;
+    color: rgb(235, 0, 0);
     font-size: 0.8rem;
     display: none;
 }
