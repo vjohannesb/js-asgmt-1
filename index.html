@@ -15,27 +15,6 @@
     <title>JavaScript Uppgift 1</title>
 </head>
 
-<!-- 
-    ! G !
-    * Submit ska göras av Javascript
-    * Valideras innan sparning
-        * Uppmärksamma via CSS
-        * Skrivas ut under resp. fält vad som är fel
-        * Spara-knappen inaktiverad tills korrekt ifyllt
-    * Spara informationen i en lista
-    * Visa listan på sidan
-        * Förnamn Efternamn
-        * Detaljerad vy när man trycker på personen (jQuery toggle)
-    
-    ! VG !
-    * Ska gå att ändra en användares information
-        * Flytta info från details till form
-        * Spara => Uppdatera info (inte ta bort och lägga in ny?)
-        * Måste ha samma position
-    * Ska gå att ta bort en användare
-    * Ska inte gå att lägga in dubbletter
--->
-
 <body>
     <main>
         <article>
@@ -52,20 +31,20 @@
                             <div class="col-6">
                                 <label for="firstname" class="form-label">Förnamn</label>
                                 <input class="form-control" type="text" id="firstname" name="firstname"
-                                    placeholder="Förnamn">
+                                    placeholder="Förnamn" maxlength="50">
                                 <span class="input-warning">Du måste ange ett förnamn (a-ö)</span>
                             </div>
                             <div class="col-6">
                                 <label for="lastname" class="form-label">Efternamn</label>
                                 <input class="form-control" type="text" id="lastname" name="lastname"
-                                    placeholder="Efternamn">
+                                    placeholder="Efternamn" maxlength="50">
                                 <span class="input-warning">Du måste ange ett efternamn (a-ö)</span>
                             </div>
 
                             <div class="col-12">
                                 <label for="email" class="form-label">E-postaddress</label>
                                 <input class="form-control" type="email" id="email" name="email"
-                                    placeholder="E-postaddress">
+                                    placeholder="E-postaddress" maxlength="100">
                                 <span class="input-warning">Du måste ange en korrekt e-postadress
                                     (ex. epost@domän.se)</span>
                                 <span id="email-warning" class="input-warning">Denna e-postadress finns redan
@@ -75,7 +54,7 @@
                             <div class="col-12">
                                 <label for="phone" class="form-label">Telefonnummer</label>
                                 <input class="form-control" type="tel" id="phone" name="phone"
-                                    placeholder="Telefonnummer">
+                                    placeholder="Telefonnummer" maxlength="20">
                                 <span class="input-warning">Du måste ange ett korrekt telefonnummer
                                     (ex. 0701234567)</span>
                                 <span id="phone-warning" class="input-warning">Detta telefonnummer finns redan
@@ -84,21 +63,22 @@
                             <div class="col-12">
                                 <label for="address" class="form-label">Gatuadress</label>
                                 <input class="form-control" type="text" id="address" name="address"
-                                    placeholder="Gatuaddress">
+                                    placeholder="Gatuaddress" maxlength="50">
                                 <span class="input-warning">Du måste ange en adress (a-ö, 0-9) </span>
                             </div>
 
                             <div class="col-5">
                                 <label for="zipcode" class="form-label">Postkod</label>
                                 <input class="form-control" type="text" id="zipcode" name="zipcode"
-                                    placeholder="Postkod">
+                                    placeholder="Postkod" maxlength="5">
 
                                 <span class="input-warning">Du måste ange en postkod, 5 siffror.</span>
                             </div>
 
                             <div class="col-7">
                                 <label for="city" class="form-label">Postort</label>
-                                <input class="form-control" type="text" id="city" name="city" placeholder="Postort">
+                                <input class="form-control" type="text" id="city" name="city" placeholder="Postort"
+                                    maxlength="20">
                                 <span class="input-warning">Du måste ange en postort (a-ö)</span>
                             </div>
 
