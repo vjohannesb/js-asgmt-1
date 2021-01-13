@@ -20,9 +20,9 @@ const validInputs = {
 }
 
 //#region Regex
-// Non-whitespace i början -> "@" -> a-z0-9_- -> "." -> två eller mer bokstäver i slutet (tld)
+// a-z0-9._- i början -> "@" -> a-z0-9_- -> "." -> två eller mer bokstäver i slutet (tld)
 // [stödjer ej ickelatinska tecken]
-const emailRegex = /^\S+@[a-z0-9_-]+\.\w{2,}$/i;
+const emailRegex = /^[a-z0-9._-]+@[a-z0-9_-]+\.\w{2,}$/i;
 // Matchar allt utom a-z, specialkaraktärer (ex å, é), " " och "-"
 const nameRegex = /[^a-z\u00C0-\u00ff -]/i;
 // Samma som nameRegex + siffror + kommatecken
