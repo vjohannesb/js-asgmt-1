@@ -48,58 +48,73 @@
                             <span id="id-title" class="fw-bold">ID:</span>
                             <span id="id-nr">123</span>
                         </p>
-                        <form id="user-registration" class="row gy-3">
+                        <form id="user-registration" class="row gy-3" novalidate>
                             <div class="col-6">
                                 <label for="firstname" class="form-label">Förnamn</label>
                                 <input class="form-control" type="text" id="firstname" name="firstname"
                                     placeholder="Förnamn">
+                                <span class="input-warning">Du måste ange minst 1 bokstav (a-ö)</span>
                             </div>
                             <div class="col-6">
                                 <label for="lastname" class="form-label">Efternamn</label>
-                                <input class="form-control" type="text" id="lastname" name="firstname"
+                                <input class="form-control" type="text" id="lastname" name="lastname"
                                     placeholder="Efternamn">
+                                <span class="input-warning">Du måste ange minst 1 bokstav (a-ö)</span>
                             </div>
 
                             <div class="col-12">
                                 <label for="email" class="form-label">E-postaddress</label>
-                                <input class="form-control" type="text" id="email" name="email"
+                                <input class="form-control" type="email" id="email" name="email"
                                     placeholder="E-postaddress">
+                                <span class="input-warning">Du måste ange en korrekt e-postadress
+                                    (ex. epost@domän.se)</span>
+                                <span id="email-warning" class="input-warning">Denna e-postadress finns redan
+                                    registrerad</span>
                             </div>
 
                             <div class="col-12">
                                 <label for="phone" class="form-label">Telefonnummer</label>
-                                <input class="form-control" type="text" id="phone" name="phone"
+                                <input class="form-control" type="tel" id="phone" name="phone"
                                     placeholder="Telefonnummer">
+                                <span class="input-warning">Du måste ange ett korrekt telefonnummer
+                                    (ex. 0701234567)</span>
+                                <span id="phone-warning" class="input-warning">Detta telefonnummer finns redan
+                                    registrerat</span>
                             </div>
                             <div class="col-12">
                                 <label for="address" class="form-label">Gatuadress</label>
                                 <input class="form-control" type="text" id="address" name="address"
                                     placeholder="Gatuaddress">
+                                <span class="input-warning">Du måste ange en adress (a-ö, 0-9) </span>
                             </div>
 
                             <div class="col-5">
                                 <label for="zipcode" class="form-label">Postkod</label>
                                 <input class="form-control" type="text" id="zipcode" name="zipcode"
                                     placeholder="Postkod">
+
+                                <span class="input-warning">Du måste ange en postkod, 5 siffror.</span>
                             </div>
 
                             <div class="col-7">
                                 <label for="city" class="form-label">Postort</label>
                                 <input class="form-control" type="text" id="city" name="city" placeholder="Postort">
+                                <span class="input-warning">Du måste ange en postort (a-ö)</span>
                             </div>
 
                             <div class="col-12" id="submitBtn">
-                                <input type="submit" id="saveUser" value="Spara" class="btn btn-outline-success w-100">
+                                <input id="saveUser" class="btn btn-outline-success w-100" type="submit" value="Spara"
+                                    disabled="true">
                             </div>
 
                             <div class="col-12" id="editBtns">
                                 <div class="row">
                                     <div class="col-6">
-                                        <input type="submit" id="saveEdit" class="btn btn-outline-success w-100"
-                                            value="Spara">
+                                        <input id="saveEdit" class="btn btn-outline-success w-100" type="submit"
+                                            value="Spara" disabled="true">
                                     </div>
                                     <div class="col-6">
-                                        <input type="reset" id="resetEdit" class="btn btn-outline-danger w-100"
+                                        <input id="resetEdit" class="btn btn-outline-danger w-100" type="reset"
                                             value="Avbryt">
                                     </div>
                                 </div>

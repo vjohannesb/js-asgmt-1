@@ -1,16 +1,42 @@
-// * Constants
-const userDOMList = document.getElementById("user-list");
+// ! Constants
+const userDOMList = $("#user-list");
+const emailWarning = $("#email-warning");
+const phoneWarning = $("#phone-warning");
+
 const submitBtn = document.getElementById("saveUser");
 const saveEditBtn = document.getElementById("saveEdit");
 const resetEditBtn = document.getElementById("resetEdit");
 
-const detailCol1 = "col-7 col-md-12 col-lg-7";
-const detailCol2 = "col-5 col-md-12 col-lg-5";
+const inputsJQuery = $("input[type=text], input[type=email], input[type=tel]");
+const inputsArray = Array.from(inputsJQuery);
 
-const inputList = Array.from($("input").not(submitBtn).not(saveEditBtn).not(resetEditBtn))
+//#region Regex
+// Non-whitespace i början -> "@" -> a-z0-9_- -> "." -> två eller mer bokstäver i slutet (tld)
+// [stödjer ej ickelatinska tecken]
+const emailRegex = /^\S+@[a-z0-9_-]+\.\w{2,}$/i;
+// Matchar allt utom a-z, specialkaraktärer (ex å, é), " " och "-"
+const nameRegex = /[^a-z\u00C0-\u00ff -]/i;
+// Samma som nameRegex + siffror + kommatecken
+const addressRegex = /[^a-z0-9\u00C0-\u00ff, -]/i;
+// Börjar på "0" eller "+" och följs av 7-20 siffror
+const phoneRegex = /(^0|^\+)\d{7,20}$/;
+// Fem siffor i rad och inget annat före eller efter
+const zipRegex = /^\d{5}$/
+//#endregion
 
-// * Variables
+const validInputs = {
+    firstname: false,
+    lastname: false,
+    email: false,
+    phone: false,
+    address: false,
+    zipcode: false,
+    city: false
+}
+
+// ! Variables
 var userObjList = [];
+var editingId = "";
 
 // ! User-class
 class User {
@@ -59,7 +85,7 @@ class User {
 
     addDetails() {
         let col1 = $(document.createElement("div"))
-            .addClass(detailCol1)
+            .addClass("col-7 col-md-12 col-lg-7")
             .append(`<p>ID: <span class="uid">${this.id}</span></p>`,
                 `<p>E-post: <span>${this.email}</span></p>`,
                 `<p>Telefon: <span>${this.phone}</span></p>`);
@@ -79,7 +105,7 @@ class User {
             .click(() => this.deleteUser());
 
         let col2 = $(document.createElement("div"))
-            .addClass(detailCol2)
+            .addClass("col-5 col-md-12 col-lg-5")
             .append($(document.createElement("div"))
                 .append($(document.createElement("address"))
                     .append(`<p><span>${this.address}</span></p>`,
@@ -105,25 +131,18 @@ class User {
             $(this.icon).toggleClass("fa-angle-down fa-angle-up");
 
         });
-        // Tillgänglighet, simulera klick på enter (32) & space (13)
+        // Tillgänglighet, simulera "klick" på enter (32) & space (13)
         $(this.div).keydown((event) => {
-            if (event.which === 13 || event.which === 32)
+            if (event.which === 32 || event.which === 13)
                 $(this.div).click();
         });
     }
 
-    addToDOM(parent) {
-        if (!parent) console.error(`No parent selected.`)
-        else $(parent).append(this.li);
-    }
-
-    createElementAndAddToDOM(parent) {
-        this.createElement();
-        this.addToDOM(parent);
-    }
+    addToDOM = () => userDOMList.append(this.li);
 
     editUser() {
         showEditElems();
+        editingId = this.id;
 
         $("#id-nr").text(this.id);
         $("#firstname").val(this.firstName);
@@ -133,14 +152,15 @@ class User {
         $("#address").val(this.address);
         $("#zipcode").val(this.zipcode);
         $("#city").val(this.city);
+
+        inputsArray.forEach(input => validateInput({
+            currentTarget: input
+        }));
     }
 
     deleteUser() {
-        console.log("before: ", userObjList);
         $("#li-" + this.id).remove();
         userObjList = userObjList.filter((e) => e.id !== this.id);
-        console.log("after :", userObjList);
-
     }
 }
 
@@ -148,64 +168,133 @@ class User {
 submitBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
 
-    // TODO: VALIDATE
-    let user = new User(...inputList.map((input) => input.value));
-    userObjList.push(user);
-    user.createElementAndAddToDOM(userDOMList)
+    let newUser = new User(...inputsArray.map((input) => input.value.trim()));
 
-    console.log(userObjList);
+    if (!checkDuplicate(newUser)) {
+        userObjList.push(newUser);
+        newUser.createElement();
+        newUser.addToDOM();
+        resetInputs();
+    }
 });
 
 saveEditBtn.addEventListener("click", function (ev) {
     ev.preventDefault();
 
-    let user = new User(...inputList.map((input) => input.value));
-    user.id = $("#id-nr").text();
-    $("#li-" + user.id).replaceWith(user.createElement());
+    let newUser = new User(...inputsArray.map((input) => input.value.trim()));
+    newUser.id = editingId;
 
-    resetInputs();
-    hideEditElems();
+    if (!checkDuplicate(newUser)) {
+        if ($("#li-" + newUser.id).length > 0) {
+            $("#li-" + newUser.id).replaceWith(newUser.createElement());
+            userObjList = userObjList.map(user => user.id == newUser.id ? newUser : user);
+        } else {
+            newUser.createElement();
+            newUser.addToDOM();
+        }
+
+        hideEditElems();
+        resetInputs();
+    }
 })
 
 resetEditBtn.addEventListener("click", () => hideEditElems());
 
 // ! Utilities
-function validateInput() {
-    // TODO: Byt ut static validate mot "live feedback"
-    for (const input of inputList) {
-        switch (input.id) {
-            case "firstname":
-            case "lastname":
-            case "address":
-            case "city":
-                break;
-        }
+function checkDuplicate(newUser) {
+    let duplicate = false;
+    if (userObjList.find(user => user.email == newUser.email && user.id != newUser.id)) {
+        emailWarning.show();
+        duplicate = true;
     }
+    if (userObjList.find(user => user.phone == newUser.phone && user.id != newUser.id)) {
+        phoneWarning.show();
+        duplicate = true;
+    }
+    return duplicate;
+}
+
+function validateInput(e) {
+    let target = e.currentTarget;
+    let valid = false;
+
+    switch (target.id) {
+        case "firstname":
+        case "lastname":
+        case "city":
+            valid = (target.value.trim().length > 0 && !nameRegex.test(target.value));
+            break;
+        case "address":
+            valid = (target.value.trim().length > 0 && !addressRegex.test(target.value));
+            break;
+        case "email":
+            valid = emailRegex.test(target.value);
+            break;
+        case "phone":
+            valid = phoneRegex.test(target.value);
+            break;
+        case "zipcode":
+            valid = zipRegex.test(target.value);
+            break;
+        default:
+            break;
+    }
+
+    if (!valid)
+        target.classList.add("invalid-input");
+    else
+        target.classList.remove("invalid-input");
+
+    validInputs[target.id] = valid;
+}
+
+function toggleSubmits() {
+    let allValid = Object.values(validInputs).some((val) => val == false);
+    submitBtn.disabled = allValid;
+    saveEditBtn.disabled = allValid;
+}
+
+function showEditElems() {
+    $("#reg-title").text("Redigera användare")
+    $("#editBtns, #edit-id-display").show();
+    $("#submitBtn").hide();
 }
 
 function hideEditElems() {
-    $("#editBtns").hide();
-    $("#edit-id-display").hide();
     $("#reg-title").text("Registrera användare")
+    $("#editBtns, #edit-id-display").hide();
     $("#submitBtn").show();
     $("#id-nr").text("");
 }
 
-function showEditElems() {
-    $("#editBtns").show();
-    $("#edit-id-display").show();
-    $("#reg-title").text("Redigera användare")
-    $("#submitBtn").hide();
+function resetInputs() {
+    inputsArray.forEach((el) => el.value = "");
+    submitBtn.disabled = true;
+    saveEditBtn.disabled = true;
+    emailWarning.hide();
+    phoneWarning.hide();
+
+    for (let key in validInputs)
+        validInputs[key] = false;
 }
 
-function resetInputs() {
-    inputList.forEach((el) => el.value = "");
-}
 
 // ! (jQuery) DOM ready
 $(document).ready(function () {
-    let me = new User("Johannes", "Bergendahl", "a@a.com", "07634762334", "Hemvägen", "111", "Örebro");
-    me.createElementAndAddToDOM(userDOMList);
+    let me = new User("Johannes", "Bergendahl", "johannes.b.nilsson@gmail.com", "0763476233", "Hemvägen", "11111", "Örebro");
+    me.createElement();
+    me.addToDOM();
     userObjList.push(me);
 
+    // Validera vid init/reload
+    resetInputs();
+    hideEditElems();
+
+    $(inputsJQuery).on("input", function (e) {
+        validateInput(e);
+        toggleSubmits();
+    });
+
+    $("#email").on("focus", () => emailWarning.hide());
+    $("#phone").on("focus", () => phoneWarning.hide());
 });

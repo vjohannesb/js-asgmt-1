@@ -4,9 +4,6 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-main article .container,
-main article .container-sm,
-main article .container-md,
 main article .container-lg {
     margin-top: 2rem;
     padding-left: 1rem;
@@ -51,12 +48,21 @@ main article .container-lg {
     cursor: pointer;
 }
 
-.user-details span[contenteditable="true"] {
-    border-bottom: 2px solid rgba(47, 218, 218, 0.5);
-    padding: 1px;
-}
-
 #editBtns,
 #edit-id-display {
     display: none;
+}
+
+.invalid-input {
+    border: 1px solid red !important;
+}
+
+.input-warning {
+    color: red;
+    font-size: 0.8rem;
+    display: none;
+}
+
+.invalid-input+.input-warning {
+    display: inline !important;
 }
