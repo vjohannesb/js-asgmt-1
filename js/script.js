@@ -157,8 +157,6 @@ class User {
     deleteUser() {
         $("#li-" + this.id).remove();
         userObjList = userObjList.filter((u) => u.id !== this.id);
-        editingId = "";
-        hideEditElems();
     }
 }
 
