@@ -124,12 +124,6 @@ class User {
         $(this.div).click(() => {
             $(`#${this.id}`).toggle(100);
             $(`#li-${this.id} .toggle-details`).toggleClass("fa-angle-down fa-angle-up");
-
-        });
-        // Tillgänglighet, simulera "klick" på enter (32) & space (13)
-        $(this.div).keydown((event) => {
-            if (event.which === 32 || event.which === 13)
-                $(this.div).click();
         });
     }
 
